@@ -1,13 +1,14 @@
-import {useState} from 'react';
-import { getCity, getWeather } from '../Hooks/WeatherApi';
+import {useState, useEffect} from 'react';
+import { getData } from '../Hooks/WeatherApi';
 
 
-const WeatherCard = ({title}) => {
+const WeatherCard = ({inputCity}) => {
     const[city, setCity] = useState(null);
     const[weatherCondition, setWeatherCondition] = useState(null);
     const[temp, setTemp] = useState(null);
     const[imgWeatherIcon, setImgWeatherIcon] = useState(null);
     const[isDay, setIsDay] = useState(null);
+    const[isWrong, setIsWrong] = useState(null);
 
     const updateUI = (data) => {
 
@@ -16,53 +17,35 @@ const WeatherCard = ({title}) => {
         setCity(cityDetails.EnglishName);
         setWeatherCondition(weather.WeatherText);
         setTemp(weather.Temperature.Metric.Value);
-
         setIsDay(weather.IsDayTime ? 'day' : 'night');
-
-        console.log(isDay);
-
         setImgWeatherIcon(weather.WeatherIcon);
 
     };
 
-    const getData = async (userInput) =>{
-
-        const cityDetails = await getCity(userInput);
-        const weather = await getWeather(cityDetails.Key);
-
-        return {
-            cityDetails,
-            weather
-        };
-
-    }
-
-    const handleSubmit = (e) =>{
+    // const handleSubmit = (e) =>{
         
-        e.preventDefault();
-        //Dohvacanje value pute event-a
-
-        const userInput = e.target.location.value.trim();
-        console.log(userInput);
-        
-        getData(userInput).then(data => {
-            console.log(data);
-            updateUI(data);
-        }).catch((err) => {
-            console.log(err.message);
-        })  
-    };
+    //     e.preventDefault();
+    //     //Dohvacanje value pute event-a
+    
+    //     getData(e.target.location.value.trim()).then(data => {
+    //         setIsWrong(false);
+    //         updateUI(data);
+    //     }).catch((err) => {
+    //         setIsWrong(true);
+    //         console.log(err.message);
+    //     })  
+    // };
 
     return (
         <div className="weather-card">  
             <div className="flexbox-container">
-                <h2>{title + city}</h2>
                 <div className="flexbox-item">
-                    <form className="input-form" onSubmit={handleSubmit}>
-                        <p htmlFor="location" className="location-input">Enter your location</p>
+                    <form className="input-form">
+                        <p>Enter your location</p>
                         <input type="text" name="location" placeholder="Location..."/>
                     </form>
                 </div>
+                {isWrong && <div>Enter a valid city</div>}
                 <div className="flexbox-item">
                     { !weatherCondition && <img src="https://via.placeholder.com/400x300" alt="" />}
                     { isDay && <img src={require(`../icons/icons/${isDay}.svg`).default} alt="Day" />}
