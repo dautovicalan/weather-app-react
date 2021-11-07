@@ -1,13 +1,13 @@
 import {useState} from 'react';
 import { getCity, getWeather } from '../Hooks/WeatherApi';
-import Image from './Image';
 
 
 const WeatherCard = ({title}) => {
     const[city, setCity] = useState(null);
     const[weatherCondition, setWeatherCondition] = useState(null);
     const[temp, setTemp] = useState(null);
-    const[img, setImg] = useState(null);
+    const[imgWeatherIcon, setImgWeatherIcon] = useState(null);
+    const[isDay, setIsDay] = useState(null);
 
     const updateUI = (data) => {
 
@@ -17,7 +17,11 @@ const WeatherCard = ({title}) => {
         setWeatherCondition(weather.WeatherText);
         setTemp(weather.Temperature.Metric.Value);
 
-        setImg(`../icons/icons/${weather.WeatherIcon}.svg`);
+        setIsDay(weather.IsDayTime ? 'day' : 'night');
+
+        console.log(isDay);
+
+        setImgWeatherIcon(weather.WeatherIcon);
 
     };
 
@@ -60,9 +64,12 @@ const WeatherCard = ({title}) => {
                     </form>
                 </div>
                 <div className="flexbox-item">
-                    <img src="https://via.placeholder.com/400x300" alt="" />
-                    { !img && <div>No image</div>}
-                    { img && <Image source={img} />}
+                    { !weatherCondition && <img src="https://via.placeholder.com/400x300" alt="" />}
+                    { isDay && <img src={require(`../icons/icons/${isDay}.svg`).default} alt="Day" />}
+                    <div className="weather-icon">
+                        {!imgWeatherIcon && <div>No image</div>}
+                        {imgWeatherIcon && <img src={require(`../icons/icons/${imgWeatherIcon}.svg`).default} alt="Weater Condition" />}
+                    </div>
                     <h2 className="city-name">{city}</h2>
                     <div className="weather-condition">{weatherCondition}</div>
                     <div className="temperature-container">
